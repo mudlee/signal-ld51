@@ -51,7 +51,6 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
 		var mainTable = new Table();
 		mainTable.setFillParent(true);
-		//mainTable.setDebug(true);
 
 		var innerTable = new Table();
 		innerTable.setBackground(textureRegionDrawableBg);
@@ -85,7 +84,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		if (state != State.PLAYING_WIN_SIGNAL && state != State.GAME_OVER) {
 			var now = System.currentTimeMillis();
 			if ((gameStartedAt + GAME_MAX_LENGTH_MILLIS) < now) {
-				signalPlayer.repeatGameOverSignalThreeTimesThenClose();
+				signalPlayer.playGameOverSignalThenClose();
 				setState(State.GAME_OVER);
 				conversation.play(GAME_OVER_CONVERSATION);
 			}
@@ -112,19 +111,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		}
 		else if (state == State.PLAYING_MAIN_SIGNAL) {
 			if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.NUMPAD_ENTER)) {
-				var command = neoLabel.getText().toString().replaceAll(" ", "").replaceAll(SQUARE_CHAR+"", "");
-				Log.debug("Command: "+command);
-				neoLabel.setText(SQUARE_CHAR+"");
-				if (command.equals(THE_ANSWER_TO_LIFE_THE_UNIVERSE_AND_EVERYTHING)) {
-					Log.debug("Correct answer");
-					signalPlayer.repeatWinSignalThreeTimesThenClose();
-					setState(State.PLAYING_WIN_SIGNAL);
-					conversation.play(WINNING_CONVERSATION);
-				}
-				else {
-					Log.debug("Invalid answer");
-					signalPlayer.repeatInvalidAnswerMorseThreeTimesThenRepeat(Asset.SIGNAL_INITIAL_SOUND);
-				}
+				parseCommand();
+			}
+			else if(Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE)) {
+				deleteLastChar();
 			}
 		}
 
@@ -149,11 +139,41 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
 	@Override
 	public boolean keyTyped(char character) {
-		if (character != '\n' && state == State.PLAYING_MAIN_SIGNAL) {
+		if(!Character.isAlphabetic(character) && !Character.isDigit(character) && character != '-' && character != '.' && character != ' ') {
+			return true;
+		}
+
+		if (state == State.PLAYING_MAIN_SIGNAL) {
 			var curr = neoLabel.getText().toString().replace(SQUARE_CHAR+"", "") + character + SQUARE_CHAR;
 			neoLabel.setText(curr);
 		}
 		return true;
+	}
+
+	private void parseCommand() {
+		var command = neoLabel.getText().toString().replaceAll(" ", "").replaceAll(SQUARE_CHAR+"", "");
+		Log.debug("Command: "+command);
+		neoLabel.setText(SQUARE_CHAR+"");
+
+		if (command.equals(THE_ANSWER_TO_LIFE_THE_UNIVERSE_AND_EVERYTHING)) {
+			Log.debug("Correct answer");
+			signalPlayer.planWinSignalThenClose();
+			setState(State.PLAYING_WIN_SIGNAL);
+			conversation.play(WINNING_CONVERSATION);
+		}
+		else {
+			Log.debug("Invalid answer");
+			signalPlayer.playInvalidAnswerSignalThen(Asset.SIGNAL_INITIAL_SOUND);
+		}
+	}
+
+	private void deleteLastChar() {
+		var currentText = neoLabel.getText().toString();
+		if (currentText.length() <= 1) {
+			return;
+		}
+		var newText = currentText.substring(0, currentText.length() - 2) + SQUARE_CHAR;
+		neoLabel.setText(newText);
 	}
 
 	@Override

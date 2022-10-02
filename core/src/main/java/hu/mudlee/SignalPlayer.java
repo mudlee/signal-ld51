@@ -1,6 +1,8 @@
 package hu.mudlee;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 
 import java.util.Queue;
@@ -9,19 +11,23 @@ import java.util.concurrent.LinkedBlockingQueue;
 import static hu.mudlee.Constants.SIGNAL_REPEAT_FREQUENCY_MILLIS;
 
 public class SignalPlayer {
-    private record SignalQueueEntry(Asset morse, boolean loop){}
+    private record SignalQueueEntry(Asset morse, boolean loop, float volume){}
 
     private final AssetManager assetManager;
-    private Sound morse;
-    private Queue<SignalQueueEntry> queue = new LinkedBlockingQueue<>();
-    private String currentMorse = "";
+    private final Queue<SignalQueueEntry> queue = new LinkedBlockingQueue<>();
     private double lastPlayed = 0;
+    private Music signal;
+    private boolean endingGame = false;
 
     public SignalPlayer(AssetManager assetManager) {
         this.assetManager = assetManager;
     }
 
     public void tick() {
+        if(endingGame && !signal.isPlaying()) {
+            Gdx.app.exit();
+        }
+
         if(queue.isEmpty()) {
             return;
         }
@@ -30,7 +36,7 @@ public class SignalPlayer {
         if ((lastPlayed + SIGNAL_REPEAT_FREQUENCY_MILLIS) < now || lastPlayed == 0) {
             var next = queue.poll();
             lastPlayed = now;
-            playMorse(next.morse);
+            playMorse(next.morse, next.volume);
             if (next.loop) {
                 var old = queue.stream().toList();
                 queue.clear();
@@ -41,34 +47,32 @@ public class SignalPlayer {
     }
 
     public void repeatInitialSequence() {
-        queue.add(new SignalQueueEntry(Asset.SIGNAL_INITIAL_SOUND, true));
+        queue.add(new SignalQueueEntry(Asset.SIGNAL_INITIAL_SOUND, true, 0.4f));
     }
 
-    public void repeatInvalidAnswerMorseThreeTimesThenRepeat(Asset asset) {
+    public void playInvalidAnswerSignalThen(Asset asset) {
         queue.clear();
-        queue.add(new SignalQueueEntry(Asset.SIGNAL_INVALID_SOUND, false));
-        queue.add(new SignalQueueEntry(Asset.SIGNAL_INVALID_SOUND, false));
-        queue.add(new SignalQueueEntry(Asset.SIGNAL_INVALID_SOUND, false));
-        queue.add(new SignalQueueEntry(asset, true));
+        queue.add(new SignalQueueEntry(Asset.SIGNAL_INVALID_SOUND, false, 0.4f));
+        queue.add(new SignalQueueEntry(asset, true, 0.4f));
     }
 
-    public void repeatWinSignalThreeTimesThenClose() {
+    public void planWinSignalThenClose() {
         queue.clear();
-        queue.add(new SignalQueueEntry(Asset.SIGNAL_WIN_SOUND, false));
-        queue.add(new SignalQueueEntry(Asset.SIGNAL_WIN_SOUND, false));
-        queue.add(new SignalQueueEntry(Asset.SIGNAL_WIN_SOUND, false));
+        queue.add(new SignalQueueEntry(Asset.SIGNAL_WIN_SOUND, false, 1f));
     }
 
-    public void repeatGameOverSignalThreeTimesThenClose() {
+    public void playGameOverSignalThenClose() {
         queue.clear();
-        queue.add(new SignalQueueEntry(Asset.SIGNAL_GAME_OVER_SOUND, false));
-        queue.add(new SignalQueueEntry(Asset.SIGNAL_GAME_OVER_SOUND, false));
-        queue.add(new SignalQueueEntry(Asset.SIGNAL_GAME_OVER_SOUND, false));
+        queue.add(new SignalQueueEntry(Asset.SIGNAL_GAME_OVER_SOUND, false, 1f));
     }
 
-    private void playMorse(Asset asset) {
-        morse = assetManager.get(asset.getReference(), Sound.class);
-        morse.play(1.4f);
-        Log.debug("Playing: "+asset.getReference());
+    private void playMorse(Asset asset, float volume) {
+        signal = assetManager.get(asset.getReference(), Music.class);
+        signal.play();
+        signal.setVolume(volume);
+        if (asset == Asset.SIGNAL_GAME_OVER_SOUND || asset == Asset.SIGNAL_WIN_SOUND) {
+            endingGame = true;
+        }
+        Log.debug("Playing: "+asset.getReference()+", volume: "+volume);
     }
 }

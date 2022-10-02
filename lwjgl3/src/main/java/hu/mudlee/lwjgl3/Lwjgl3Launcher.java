@@ -16,7 +16,7 @@ public class Lwjgl3Launcher {
 
 	private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {
 		Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
-		cfg.setTitle("LD51");
+		cfg.setTitle("Signal for LD51 ....- --... ....- -.-. ....- ---.. ....- -....");
 		cfg.useVsync(false);
 		cfg.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate);
 
@@ -24,10 +24,11 @@ public class Lwjgl3Launcher {
 		var height = Lwjgl3ApplicationConfiguration.getDisplayMode().height / 2;
 
 		if (Lwjgl3ApplicationConfiguration.getDisplayMode().width < 1200) {
+			cfg.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
 		}
 
 		cfg.setWindowedMode(width, height);
-		cfg.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png");
+		cfg.setWindowIcon("icons/128.png", "icons/64.png", "icons/32.png", "icons/16.png");
 		return cfg;
 	}
 }

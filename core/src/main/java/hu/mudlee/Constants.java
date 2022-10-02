@@ -21,7 +21,7 @@ public class Constants {
 	public static final List<QuestionAnswer> INITIAL_CONVERSATION = Arrays.asList(
 			new QuestionAnswer("Wake up, samurai.", "Who?"),
 			new QuestionAnswer("Bill, is that you?","..."),
-			new QuestionAnswer("? Hmm.... hold on... damn, wrong game again...\nKhm, are you still with me? \nNeo, right? Wake up, Neo.","What?")/*,
+			new QuestionAnswer("? Hmm.... hold on... damn, wrong game again...\nKhm, are you still with me? \nNeo, right? Wake up, Neo.","What?"),
 			new QuestionAnswer("Follow the white rabbit.","What???"),
 			new QuestionAnswer("Nah, kidding. Listen, we are the government\nand our radio telescopes just caught a repeating message!\nIt comes from Jupiter and repeats every 10 seconds.","And why are you telling me this?"),
 			new QuestionAnswer("Help us, maybe? You are the hero of this story, after all...","I'm just an LD Jam participant."),
@@ -30,7 +30,7 @@ public class Constants {
 			new QuestionAnswer("Will you help us then?","Absolutely not."),
 			new QuestionAnswer("Awesome, let's start then.","..."),
 			new QuestionAnswer("I'm already hooking you up with our telescopes.\nWhatever you type, it will be broadcasted. ","Shit."),
-			new QuestionAnswer("The entire population of Washington DC depends on you!\nNo pressure! Good luck, Carl!\nJust hit ENTER.\nStarting the signal, ready, steady, go... on air!","")*/
+			new QuestionAnswer("The entire population of Washington DC depends on you!\nNo pressure! Good luck, Carl!\nJust hit ENTER.\nStarting the signal, ready, steady, go... on air!","")
 	);
 
 	public static final List<QuestionAnswer> WINNING_CONVERSATION = Arrays.asList(

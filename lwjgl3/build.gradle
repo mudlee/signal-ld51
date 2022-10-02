@@ -86,11 +86,11 @@ if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_14)) {
             jpackageHome = javaHome.getOrElse("")
             mainJar = jar.archiveFileName.get()
             if (os.contains('win')) {
-                imageOptions = ["--icon", "icons/logo.ico"]
+                imageOptions = ["--icon", "icons/win.ico"]
             } else if (os.contains('nix') || os.contains('nux') || os.contains('bsd')) {
-                imageOptions = ["--icon", "icons/logo.png"]
+                imageOptions = ["--icon", "icons/128.png"]
             } else if (os.contains('mac')) {
-                imageOptions = ["--icon", "icons/logo.icns", " --java-options", "\"XstartOnFirstThread\""]
+                imageOptions = ["--icon", "icons/mac.icns", " --java-options", "\"XstartOnFirstThread\""]
             }
         }
     }

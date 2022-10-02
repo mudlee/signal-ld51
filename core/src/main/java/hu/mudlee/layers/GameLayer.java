@@ -40,7 +40,7 @@ public class GameLayer extends Game implements Layer {
 				assetsLoaded = true;
 				ambient = assetManager.get(Asset.AUDIO_AMBIENT.getReference(), Music.class);
 				ambient.setLooping(true);
-				ambient.setVolume(0.3f);
+				ambient.setVolume(0.1f);
 				ambient.play();
 				startGame();
 				Log.debug("Assets loaded");

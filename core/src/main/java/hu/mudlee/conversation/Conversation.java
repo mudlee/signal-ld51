@@ -134,7 +134,7 @@ public class Conversation {
 		}
 		neoLastTyped = now;
 		neoText.append(neoTextToDisplay.charAt(neoTypingIdx));
-		neoKeyboardSounds.get(rnd.nextInt(neoKeyboardSounds.size())).play(0.5f);
+		neoKeyboardSounds.get(rnd.nextInt(neoKeyboardSounds.size())).play(0.2f);
 		neoTextChanged = true;
 		neoTypingIdx++;
 		if (neoTypingIdx > neoTextToDisplay.length() - 1) {
@@ -147,7 +147,7 @@ public class Conversation {
 		agentLastTyped = now;
 		agentText.append(agentTextToDisplay.charAt(agentTypingIdx));
 		agentTextChanged = true;
-		agentKeyboardSounds.get(rnd.nextInt(agentKeyboardSounds.size())).play(0.1f);
+		agentKeyboardSounds.get(rnd.nextInt(agentKeyboardSounds.size())).play(0.01f);
 		agentTypingIdx++;
 		if (agentTypingIdx > agentTextToDisplay.length() - 1) {
 			agentTextToDisplay = "";
