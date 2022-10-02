@@ -90,7 +90,7 @@ if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_14)) {
             } else if (os.contains('nix') || os.contains('nux') || os.contains('bsd')) {
                 imageOptions = ["--icon", "../assets/icons/128.png"]
             } else if (os.contains('mac')) {
-                imageOptions = ["--icon", "../assets/icons/mac.icns", " --java-options", "\"XstartOnFirstThread\""]
+                imageOptions = ["--icon", "../assets/icons/mac.icns", "--java-options", "\"-XstartOnFirstThread\""]
             }
         }
     }

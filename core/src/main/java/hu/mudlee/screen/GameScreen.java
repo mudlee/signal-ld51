@@ -70,9 +70,9 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
 		innerTable.add(titleLabel).expandX().height(70);
 		innerTable.row();
-		innerTable.add(agentLabel).padTop(20).expand().fill().padLeft(50);
+		innerTable.add(agentLabel).padTop(20).expand().fill().padLeft(20);
 		innerTable.row();
-		innerTable.add(neoLabel).padTop(20).expand().fill().padLeft(50);
+		innerTable.add(neoLabel).padTop(20).expand().fill().padLeft(20);
 
 		stage.addActor(mainTable);
 

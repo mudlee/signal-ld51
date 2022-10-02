@@ -23,19 +23,19 @@ public class Constants {
 			new QuestionAnswer("Bill, is that you?","..."),
 			new QuestionAnswer("? Hmm.... hold on... damn, wrong game again...\nKhm, are you still with me? \nNeo, right? Wake up, Neo.","What?"),
 			new QuestionAnswer("Follow the white rabbit.","What???"),
-			new QuestionAnswer("Nah, kidding. Listen, we are the government\nand our radio telescopes just caught a repeating message!\nIt comes from Jupiter and repeats every 10 seconds.","And why are you telling me this?"),
+			new QuestionAnswer("Nah, kidding. Listen, we are the government\nand our radio telescopes just caught\na repeating message! It comes from Jupiter\nand repeats every 10 seconds.","And why are you telling me this?"),
 			new QuestionAnswer("Help us, maybe?\nYou are the hero of this story, after all...","I'm just an LD Jam participant."),
-			new QuestionAnswer("Even better.\nThen I can tell you that we also detected\na massive object coming from Jupiter to Earth.\nWith high speed. Doomsday!\nIt's gonna hit Washington DC and only YOU can stop it.\nLet's start, prepare a pen and paper.","For what? What do we know?"),
-			new QuestionAnswer("The signal comes from Jupiter and it repeats.\nThat's all we know so far. Sorry, samu... Neoh.","Sorry Mr. Agent, I don't live in Washington and I don't care."),
+			new QuestionAnswer("Even better.\nThen I can tell you that we also detected\na massive object coming from Jupiter to Earth.\nWith high speed. Doomsday!\nIt's gonna hit Washington and only YOU can stop it.\nLet's start, prepare a pen and paper.","For what? What do we know?"),
+			new QuestionAnswer("The signal comes from Jupiter and it repeats.\nThat's all we know so far. Sorry, samu... Neoh.","Sorry Mr. Agent,\nI don't live in Washington and I don't care."),
 			new QuestionAnswer("Will you help us then?","Absolutely not."),
 			new QuestionAnswer("Awesome, let's start then.","..."),
 			new QuestionAnswer("I'm already hooking you up with our telescopes.\nWhatever you type, it will be broadcasted. ","Shit."),
 			new QuestionAnswer("The entire population of Washington DC depends on you!\nNo pressure! Good luck, Carl!","NEO!"),
-			new QuestionAnswer("Type your message,\nthen hit ENTER for broadcasting it.\nStarting the signal, ready, steady, go... on air!","")
+			new QuestionAnswer("Whatever. Type your message,\nthen hit ENTER for broadcasting it.\nStarting the signal, ready, steady, go... on air!","")
 	);
 
 	public static final List<QuestionAnswer> WINNING_CONVERSATION = Arrays.asList(
-			new QuestionAnswer("Did you hear that? The object just disappeared!", "WOW"),
+			new QuestionAnswer("Did you hear that?\nThe object just disappeared!", "WOW"),
 			new QuestionAnswer("You saved us Neyo!", "Fantastic.\nHey, you got my name almost right this time!"),
 			new QuestionAnswer("I did? I did! Thank you for your help!", "You are welcome..."),
 			new QuestionAnswer("While we are here...", "?"),
@@ -43,7 +43,7 @@ public class Constants {
 	);
 
 	public static final List<QuestionAnswer> GAME_OVER_CONVERSATION = Arrays.asList(
-			new QuestionAnswer("Oh no! What happened? The object tripled its size!!", "Guess what guys, it's time to embrace the horror!\nLook, we've got front row tickets to the end of the earth!")
+			new QuestionAnswer("Oh no! What happened?\nThe object tripled its size!!", "Guess what guys, it's time to embrace the horror!\nLook, we've got front row tickets\nto the end of the earth!")
 
 	);
 }

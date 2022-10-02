@@ -24,7 +24,8 @@ public class Lwjgl3Launcher {
 		var height = Lwjgl3ApplicationConfiguration.getDisplayMode().height / 2;
 
 		if (width < 1200) {
-			cfg.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
+			width = Lwjgl3ApplicationConfiguration.getDisplayMode().width;
+			height = Lwjgl3ApplicationConfiguration.getDisplayMode().height;
 		}
 
 		cfg.setWindowedMode(width, height);
