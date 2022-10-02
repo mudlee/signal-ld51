@@ -24,7 +24,7 @@ public class Conversation {
 	private double lastQAFinishedAt = 0;
 	private String agentTextToDisplay = "";
 	private String neoTextToDisplay = "";
-	private final Queue<QuestionAnswer> queue = new LinkedBlockingQueue<>();
+	private final Queue<ConversationItem> queue = new LinkedBlockingQueue<>();
 	private final List<Sound> neoKeyboardSounds = new ArrayList<>();
 	private final List<Sound> agentKeyboardSounds = new ArrayList<>();
 
@@ -41,21 +41,24 @@ public class Conversation {
 		agentKeyboardSounds.add(assetManager.get(Asset.A_KEY_4.getReference(), Sound.class));
 	}
 
-	public void play(List<QuestionAnswer> qas) {
+	public void play(List<ConversationItem> qas, boolean onlyAgent) {
 		agentTextChanged = true;
-		neoTextChanged = true;
 		agentText.clear();
-		neoText.clear();
 		agentTypingIdx = 0;
-		neoTypingIdx = 0;
 		agentLastTyped = 0;
-		neoLastTyped = 0;
 		agentTextToDisplay = "";
-		neoTextToDisplay = "";
 		queue.clear();
 		queue.addAll(qas);
 		agentLastTyped = System.currentTimeMillis();
-		neoLastTyped = System.currentTimeMillis();
+
+		if (!onlyAgent) {
+			neoTextChanged = true;
+			neoText.clear();
+			neoTypingIdx = 0;
+			neoLastTyped = 0;
+			neoTextToDisplay = "";
+			neoLastTyped = System.currentTimeMillis();
+		}
 	}
 
 	public void tick() {
@@ -65,9 +68,12 @@ public class Conversation {
 		if(!queue.isEmpty() && agentTextToDisplay.isEmpty() && neoTextToDisplay.isEmpty() && (lastQAFinishedAt + SPACE_BETWEEN_CONVERSATION_PARTS) < now) {
 			var latest = queue.poll();
 			agentTextToDisplay = latest.agent();
-			neoTextToDisplay = latest.neo();
 			resetAgentText();
-			neoTypingIdx = 0;
+
+			if (!latest.onlyAgent()) {
+				neoTypingIdx = 0;
+				neoTextToDisplay = latest.neo();
+			}
 		}
 
 		if(agentTextToDisplay.isEmpty() && neoTextToDisplay.isEmpty()) {

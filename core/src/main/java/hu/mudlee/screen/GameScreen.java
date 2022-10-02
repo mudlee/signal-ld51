@@ -18,14 +18,18 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.*;
 import hu.mudlee.*;
 import hu.mudlee.conversation.Conversation;
+import hu.mudlee.conversation.ConversationItem;
 import hu.mudlee.ui.Font;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
+import java.util.Random;
 
 import static hu.mudlee.Constants.*;
 
 public class GameScreen extends AbstractScreen implements InputProcessor {
+	private static final Random rnd = new Random();
 	private final Stage stage;
 	private final Label agentLabel;
 	private final Label neoLabel;
@@ -37,6 +41,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	private Music ambient;
 	private boolean playingWinConversation;
 	private double winningConversationFinishedAt = 0;
+	private double nextRandomMumblingAt = 0;
 
 	private enum State {
 		INITIAL_CONVERSATION,
@@ -83,7 +88,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		inputMultiplexer.addProcessor(this);
 		Gdx.input.setInputProcessor(inputMultiplexer);
 
-		conversation.play(INITIAL_CONVERSATION);
+		conversation.play(INITIAL_CONVERSATION, false);
 	}
 
 	@Override
@@ -102,7 +107,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 			var now = System.currentTimeMillis();
 			if ((gameStartedAt + GAME_MAX_LENGTH_MILLIS) < now) {
 				setState(State.GAME_OVER);
-				conversation.play(GAME_OVER_CONVERSATION);
+				conversation.play(GAME_OVER_CONVERSATION, false);
 			}
 		}
 
@@ -112,7 +117,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		}
 
 		if (state == State.GAME_WON && !signalPlayer.isPlaying() && !playingWinConversation) {
-			conversation.play(WINNING_CONVERSATION);
+			conversation.play(WINNING_CONVERSATION, false);
 			playingWinConversation = true;
 		}
 
@@ -125,34 +130,40 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		}
 
 		if (state == State.INITIAL_CONVERSATION && Gdx.input.isKeyJustPressed(Input.Keys.F11)) {
-			conversation.play(Collections.singletonList(INITIAL_CONVERSATION.get(INITIAL_CONVERSATION.size() - 1)));
+			conversation.play(Collections.singletonList(INITIAL_CONVERSATION.get(INITIAL_CONVERSATION.size() - 1)), false);
 		}
 
-		if (state == State.INITIAL_CONVERSATION || state == State.GAME_WON || state == State.GAME_OVER) {
-			conversation.tick();
+		conversation.tick();
 
-			if (conversation.hasAgentTextChanged()) {
-				conversation.ackAgentTextChange();
-				agentLabel.setText(conversation.getAgentText());
-			}
-
-			if (conversation.hasNeoTextChanged()) {
-				conversation.ackNeoTextChange();
-				neoLabel.setText(conversation.getNeoText());
-			}
-
-			if (conversation.isOver() && state == State.INITIAL_CONVERSATION) {
-				setState(State.PLAYING_MAIN_SIGNAL);
-				neoLabel.setText(SQUARE_CHAR+"");
-				signalPlayer.repeatInitialSequence();
-			}
+		if (conversation.hasAgentTextChanged()) {
+			conversation.ackAgentTextChange();
+			agentLabel.setText(conversation.getAgentText());
 		}
-		else if (state == State.PLAYING_MAIN_SIGNAL) {
+
+		if (conversation.hasNeoTextChanged()) {
+			conversation.ackNeoTextChange();
+			neoLabel.setText(conversation.getNeoText());
+		}
+
+		if (conversation.isOver() && state == State.INITIAL_CONVERSATION) {
+			setState(State.PLAYING_MAIN_SIGNAL);
+			nextRandomMumblingAt = calculateNextRandomMumbling();
+			neoLabel.setText(SQUARE_CHAR+"");
+			signalPlayer.repeatInitialSequence();
+		}
+
+		if (state == State.PLAYING_MAIN_SIGNAL) {
 			if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.NUMPAD_ENTER)) {
 				parseCommand();
 			}
 			else if(Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE)) {
 				deleteLastChar();
+			}
+
+			var now = System.currentTimeMillis();
+			if (nextRandomMumblingAt < now && conversation.isOver() && !RANDOM_AGENT_MUMBLINGS.isEmpty()) {
+				conversation.play(Collections.singletonList(nextMumbling()), true);
+				nextRandomMumblingAt = calculateNextRandomMumbling();
 			}
 		}
 
@@ -162,6 +173,20 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
 		stage.act(delta);
 		stage.draw();
+	}
+
+	private double calculateNextRandomMumbling() {
+		var now = System.currentTimeMillis();
+		var next = now + (rnd.nextInt(RANDOM_MUMBLING_DELAY_MAX_MILLIS - RANDOM_MUMBLING_DELAY_MIN_MILLIS) + RANDOM_MUMBLING_DELAY_MIN_MILLIS);
+		Log.debug("Next mumbling at: "+(new Date(next))+", now: "+(new Date(now)));
+		return next;
+	}
+
+	private ConversationItem nextMumbling() {
+		Collections.shuffle(RANDOM_AGENT_MUMBLINGS);
+		var next = RANDOM_AGENT_MUMBLINGS.get(0);
+		RANDOM_AGENT_MUMBLINGS.remove(0);
+		return next;
 	}
 
 	@Override
