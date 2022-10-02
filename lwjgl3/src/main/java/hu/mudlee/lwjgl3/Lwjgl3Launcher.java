@@ -23,7 +23,7 @@ public class Lwjgl3Launcher {
 		var width = Lwjgl3ApplicationConfiguration.getDisplayMode().width / 2;
 		var height = Lwjgl3ApplicationConfiguration.getDisplayMode().height / 2;
 
-		if (Lwjgl3ApplicationConfiguration.getDisplayMode().width < 1200) {
+		if (width < 1200) {
 			cfg.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
 		}
 
