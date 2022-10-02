@@ -30,16 +30,20 @@ public class Constants {
 			new QuestionAnswer("Will you help us then?","Absolutely not."),
 			new QuestionAnswer("Awesome, let's start then.","..."),
 			new QuestionAnswer("I'm already hooking you up with our telescopes.\nWhatever you type, it will be broadcasted. ","Shit."),
-			new QuestionAnswer("The entire population of Washington DC depends on you!\nNo pressure! Good luck, Carl!\nJust hit ENTER.\nStarting the signal, ready, steady, go... on air!","")
+			new QuestionAnswer("The entire population of Washington DC depends on you!\nNo pressure! Good luck, Carl!","NEO!"),
+			new QuestionAnswer("Type your message, then hit ENTER for broadcasting it.\nStarting the signal, ready, steady, go... on air!","")
 	);
 
 	public static final List<QuestionAnswer> WINNING_CONVERSATION = Arrays.asList(
-			new QuestionAnswer("Neyo, looks like the signal has stopped\nand the object just disappeared.\nYou saved us!", "Fantastic.\nHey, you got my name almost right this time!"),
-			new QuestionAnswer("I did? I did! Thank you for your help!\nWhile we are here, would you like to upgrade\nyour modem to our newest model, with revolutionary 300 bit/second speed?", "(Neo hangs up)")
+			new QuestionAnswer("Did you hear that? The object just disappeared!", "WOW"),
+			new QuestionAnswer("You saved us Neyo!", "Fantastic.\nHey, you got my name almost right this time!"),
+			new QuestionAnswer("I did? I did! Thank you for your help!", "You are welcome..."),
+			new QuestionAnswer("While we are here...", "?"),
+			new QuestionAnswer("Would you like to upgrade your modem to our newest model,\nwith revolutionary 300 bit/second speed?", "(Neo hangs up)")
 	);
 
 	public static final List<QuestionAnswer> GAME_OVER_CONVERSATION = Arrays.asList(
-			new QuestionAnswer("Oh no! What happened?", "Guess what guys, it's time to embrace the horror!\nLook, we've got front row tickets to the end of the earth!")
+			new QuestionAnswer("Oh no! What happened? The object tripled its size!!", "Guess what guys, it's time to embrace the horror!\nLook, we've got front row tickets to the end of the earth!")
 
 	);
 }

@@ -4,7 +4,6 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Music;
 import hu.mudlee.Asset;
 import hu.mudlee.InputManager;
 import hu.mudlee.LD51Game;
@@ -16,9 +15,8 @@ import java.util.Arrays;
 
 public class GameLayer extends Game implements Layer {
 	private final AssetManager assetManager;
-	private final InputManager inputManager; // TODO: nem kell
+	private final InputManager inputManager;
 	private boolean assetsLoaded;
-	private Music ambient;
 
 	public GameLayer(AssetManager assetManager, InputManager inputManager) {
 		this.assetManager = assetManager;
@@ -38,10 +36,6 @@ public class GameLayer extends Game implements Layer {
 			var loadingScreen = (LoadingScreen) screen;
 			if (assetManager.update() && !loadingScreen.isAnimating()) {
 				assetsLoaded = true;
-				ambient = assetManager.get(Asset.AUDIO_AMBIENT.getReference(), Music.class);
-				ambient.setLooping(true);
-				ambient.setVolume(0.1f);
-				ambient.play();
 				startGame();
 				Log.debug("Assets loaded");
 			}
@@ -52,8 +46,6 @@ public class GameLayer extends Game implements Layer {
 
 	@Override
 	public void setScreen(Screen screen) {
-		// TODO
-		//System.gc();
 		Log.debug("Switching screen to " + screen.getClass().getName());
 		super.setScreen(screen);
 	}

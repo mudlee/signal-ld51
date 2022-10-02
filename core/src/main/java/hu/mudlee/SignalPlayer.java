@@ -3,7 +3,6 @@ package hu.mudlee;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -17,14 +16,19 @@ public class SignalPlayer {
     private final Queue<SignalQueueEntry> queue = new LinkedBlockingQueue<>();
     private double lastPlayed = 0;
     private Music signal;
-    private boolean endingGame = false;
+    private boolean gameover = false;
+    private boolean won = false;
 
     public SignalPlayer(AssetManager assetManager) {
         this.assetManager = assetManager;
     }
 
+    public boolean isPlaying() {
+        return signal.isPlaying();
+    }
+
     public void tick() {
-        if(endingGame && !signal.isPlaying()) {
+        if(gameover && !signal.isPlaying()) {
             Gdx.app.exit();
         }
 
@@ -33,7 +37,7 @@ public class SignalPlayer {
         }
 
         double now = System.currentTimeMillis();
-        if ((lastPlayed + SIGNAL_REPEAT_FREQUENCY_MILLIS) < now || lastPlayed == 0) {
+        if ((lastPlayed + SIGNAL_REPEAT_FREQUENCY_MILLIS) < now || lastPlayed == 0 || won) {
             var next = queue.poll();
             lastPlayed = now;
             playMorse(next.morse, next.volume);
@@ -57,6 +61,8 @@ public class SignalPlayer {
     }
 
     public void planWinSignalThenClose() {
+        won = true;
+        signal.stop();
         queue.clear();
         queue.add(new SignalQueueEntry(Asset.SIGNAL_WIN_SOUND, false, 1f));
     }
@@ -70,8 +76,8 @@ public class SignalPlayer {
         signal = assetManager.get(asset.getReference(), Music.class);
         signal.play();
         signal.setVolume(volume);
-        if (asset == Asset.SIGNAL_GAME_OVER_SOUND || asset == Asset.SIGNAL_WIN_SOUND) {
-            endingGame = true;
+        if (asset == Asset.SIGNAL_GAME_OVER_SOUND) {
+            gameover = true;
         }
         Log.debug("Playing: "+asset.getReference()+", volume: "+volume);
     }

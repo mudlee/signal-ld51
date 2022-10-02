@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -27,19 +28,24 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	private final Label neoLabel;
 	private final Conversation conversation;
 	private final SignalPlayer signalPlayer;
+	private final AssetManager assetManager;
 	private State state = State.INITIAL_CONVERSATION;
 	private double gameStartedAt = System.currentTimeMillis();
+	private Music ambient;
+	private boolean playingWinConversation;
+	private double winningConversationFinishedAt = 0;
 
 	private enum State {
 		INITIAL_CONVERSATION,
 		PLAYING_MAIN_SIGNAL,
-		PLAYING_WIN_SIGNAL,
+		GAME_WON,
 		GAME_OVER,
 	}
 
 	public GameScreen(AssetManager assetManager) {
 		conversation = new Conversation(assetManager);
 		signalPlayer = new SignalPlayer(assetManager);
+		this.assetManager = assetManager;
 		var viewport = new ScreenViewport();
 		viewport.setUnitsPerPixel(0.5f);
 		stage = new Stage(viewport);
@@ -78,19 +84,44 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	}
 
 	@Override
+	public void show() {
+		ambient = assetManager.get(Asset.AUDIO_AMBIENT.getReference(), Music.class);
+		ambient.setLooping(true);
+		ambient.setVolume(0.1f);
+		ambient.play();
+	}
+
+	@Override
 	public void render(float delta) {
 		ScreenUtils.clear(SECONDARY_COLOR);
 
-		if (state != State.PLAYING_WIN_SIGNAL && state != State.GAME_OVER) {
+		if (state != State.GAME_WON && state != State.GAME_OVER) {
 			var now = System.currentTimeMillis();
 			if ((gameStartedAt + GAME_MAX_LENGTH_MILLIS) < now) {
-				signalPlayer.playGameOverSignalThenClose();
 				setState(State.GAME_OVER);
 				conversation.play(GAME_OVER_CONVERSATION);
 			}
 		}
 
-		if (state == State.INITIAL_CONVERSATION || state == State.PLAYING_WIN_SIGNAL || state == State.GAME_OVER) {
+		if (state == State.GAME_OVER && conversation.isOver()) {
+			ambient.stop();
+			signalPlayer.playGameOverSignalThenClose();
+		}
+
+		if (state == State.GAME_WON && !signalPlayer.isPlaying() && !playingWinConversation) {
+			conversation.play(WINNING_CONVERSATION);
+			playingWinConversation = true;
+		}
+
+		if (state == State.GAME_WON && playingWinConversation && conversation.isOver() && winningConversationFinishedAt == 0) {
+			winningConversationFinishedAt = System.currentTimeMillis();
+		}
+
+		if (winningConversationFinishedAt > 0 && (winningConversationFinishedAt + 3000) < System.currentTimeMillis()) {
+			Gdx.app.exit();
+		}
+
+		if (state == State.INITIAL_CONVERSATION || state == State.GAME_WON || state == State.GAME_OVER) {
 			conversation.tick();
 
 			if (conversation.hasAgentTextChanged()) {
@@ -118,7 +149,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 			}
 		}
 
-		if (state == State.PLAYING_MAIN_SIGNAL || state == State.PLAYING_WIN_SIGNAL || state == State.GAME_OVER) {
+		if (state == State.PLAYING_MAIN_SIGNAL || state == State.GAME_WON || state == State.GAME_OVER) {
 			signalPlayer.tick();
 		}
 
@@ -158,8 +189,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		if (command.equals(THE_ANSWER_TO_LIFE_THE_UNIVERSE_AND_EVERYTHING)) {
 			Log.debug("Correct answer");
 			signalPlayer.planWinSignalThenClose();
-			setState(State.PLAYING_WIN_SIGNAL);
-			conversation.play(WINNING_CONVERSATION);
+			setState(State.GAME_WON);
+			ambient.stop();
 		}
 		else {
 			Log.debug("Invalid answer");

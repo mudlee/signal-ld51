@@ -21,7 +21,7 @@ public class LD51Game extends ApplicationAdapter {
 
 		var gameLayer = new GameLayer(assetManager, inputManager);
 		stack.addLayer(gameLayer);
-		stack.addLayer(new DebugLayer());
+		//stack.addLayer(new DebugLayer());
 
 		gameLayer.loadGame();
 	}
