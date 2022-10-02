@@ -1,6 +1,9 @@
 package hu.mudlee.conversation;
 
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.StringBuilder;
+import hu.mudlee.Asset;
 
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -9,6 +12,7 @@ import static hu.mudlee.Constants.*;
 
 public class Conversation {
 	private static final Random rnd = new Random();
+	private final AssetManager assetManager;
 	private final StringBuilder agentText = new StringBuilder();
 	private final StringBuilder neoText = new StringBuilder();
 	private boolean agentTextChanged = true;
@@ -21,6 +25,21 @@ public class Conversation {
 	private String agentTextToDisplay = "";
 	private String neoTextToDisplay = "";
 	private final Queue<QuestionAnswer> queue = new LinkedBlockingQueue<>();
+	private final List<Sound> neoKeyboardSounds = new ArrayList<>();
+	private final List<Sound> agentKeyboardSounds = new ArrayList<>();
+
+	public Conversation(AssetManager assetManager) {
+		this.assetManager = assetManager;
+		neoKeyboardSounds.add(assetManager.get(Asset.KEY_1.getReference(), Sound.class));
+		neoKeyboardSounds.add(assetManager.get(Asset.KEY_2.getReference(), Sound.class));
+		neoKeyboardSounds.add(assetManager.get(Asset.KEY_3.getReference(), Sound.class));
+		neoKeyboardSounds.add(assetManager.get(Asset.KEY_4.getReference(), Sound.class));
+
+		agentKeyboardSounds.add(assetManager.get(Asset.A_KEY_1.getReference(), Sound.class));
+		agentKeyboardSounds.add(assetManager.get(Asset.A_KEY_2.getReference(), Sound.class));
+		agentKeyboardSounds.add(assetManager.get(Asset.A_KEY_3.getReference(), Sound.class));
+		agentKeyboardSounds.add(assetManager.get(Asset.A_KEY_4.getReference(), Sound.class));
+	}
 
 	public void play(List<QuestionAnswer> qas) {
 		agentTextChanged = true;
@@ -115,6 +134,7 @@ public class Conversation {
 		}
 		neoLastTyped = now;
 		neoText.append(neoTextToDisplay.charAt(neoTypingIdx));
+		neoKeyboardSounds.get(rnd.nextInt(neoKeyboardSounds.size())).play(0.5f);
 		neoTextChanged = true;
 		neoTypingIdx++;
 		if (neoTypingIdx > neoTextToDisplay.length() - 1) {
@@ -127,6 +147,7 @@ public class Conversation {
 		agentLastTyped = now;
 		agentText.append(agentTextToDisplay.charAt(agentTypingIdx));
 		agentTextChanged = true;
+		agentKeyboardSounds.get(rnd.nextInt(agentKeyboardSounds.size())).play(0.1f);
 		agentTypingIdx++;
 		if (agentTypingIdx > agentTextToDisplay.length() - 1) {
 			agentTextToDisplay = "";

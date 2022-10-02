@@ -25,8 +25,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	private final Stage stage;
 	private final Label agentLabel;
 	private final Label neoLabel;
-	private final Conversation conversation = new Conversation();
-	private final AlphaCetiSignalPlayer alphaCetiSignalPlayer;
+	private final Conversation conversation;
+	private final SignalPlayer signalPlayer;
 	private State state = State.INITIAL_CONVERSATION;
 	private double gameStartedAt = System.currentTimeMillis();
 
@@ -38,7 +38,8 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 	}
 
 	public GameScreen(AssetManager assetManager) {
-		alphaCetiSignalPlayer = new AlphaCetiSignalPlayer(assetManager);
+		conversation = new Conversation(assetManager);
+		signalPlayer = new SignalPlayer(assetManager);
 		var viewport = new ScreenViewport();
 		viewport.setUnitsPerPixel(0.5f);
 		stage = new Stage(viewport);
@@ -84,7 +85,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 		if (state != State.PLAYING_WIN_SIGNAL && state != State.GAME_OVER) {
 			var now = System.currentTimeMillis();
 			if ((gameStartedAt + GAME_MAX_LENGTH_MILLIS) < now) {
-				alphaCetiSignalPlayer.repeatGameOverSignalThreeTimesThenClose();
+				signalPlayer.repeatGameOverSignalThreeTimesThenClose();
 				setState(State.GAME_OVER);
 				conversation.play(GAME_OVER_CONVERSATION);
 			}
@@ -106,7 +107,7 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 			if (conversation.isOver() && state == State.INITIAL_CONVERSATION) {
 				setState(State.PLAYING_MAIN_SIGNAL);
 				neoLabel.setText(SQUARE_CHAR+"");
-				alphaCetiSignalPlayer.repeatInitialSequence();
+				signalPlayer.repeatInitialSequence();
 			}
 		}
 		else if (state == State.PLAYING_MAIN_SIGNAL) {
@@ -116,19 +117,19 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 				neoLabel.setText(SQUARE_CHAR+"");
 				if (command.equals(THE_ANSWER_TO_LIFE_THE_UNIVERSE_AND_EVERYTHING)) {
 					Log.debug("Correct answer");
-					alphaCetiSignalPlayer.repeatWinSignalThreeTimesThenClose();
+					signalPlayer.repeatWinSignalThreeTimesThenClose();
 					setState(State.PLAYING_WIN_SIGNAL);
 					conversation.play(WINNING_CONVERSATION);
 				}
 				else {
 					Log.debug("Invalid answer");
-					alphaCetiSignalPlayer.repeatInvalidAnswerMorseThreeTimesThenRepeat(Asset.SIGNAL_INITIAL_SOUND);
+					signalPlayer.repeatInvalidAnswerMorseThreeTimesThenRepeat(Asset.SIGNAL_INITIAL_SOUND);
 				}
 			}
 		}
 
 		if (state == State.PLAYING_MAIN_SIGNAL || state == State.PLAYING_WIN_SIGNAL || state == State.GAME_OVER) {
-			alphaCetiSignalPlayer.tick();
+			signalPlayer.tick();
 		}
 
 		stage.act(delta);

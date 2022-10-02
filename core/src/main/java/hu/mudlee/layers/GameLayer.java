@@ -38,10 +38,10 @@ public class GameLayer extends Game implements Layer {
 			var loadingScreen = (LoadingScreen) screen;
 			if (assetManager.update() && !loadingScreen.isAnimating()) {
 				assetsLoaded = true;
-				/*ambient = assetManager.get(Asset.AUDIO_AMBIENT.getReference(), Music.class);
+				ambient = assetManager.get(Asset.AUDIO_AMBIENT.getReference(), Music.class);
 				ambient.setLooping(true);
 				ambient.setVolume(0.3f);
-				ambient.play();*/
+				ambient.play();
 				startGame();
 				Log.debug("Assets loaded");
 			}

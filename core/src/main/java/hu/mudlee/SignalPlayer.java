@@ -8,7 +8,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import static hu.mudlee.Constants.SIGNAL_REPEAT_FREQUENCY_MILLIS;
 
-public class AlphaCetiSignalPlayer {
+public class SignalPlayer {
     private record SignalQueueEntry(Asset morse, boolean loop){}
 
     private final AssetManager assetManager;
@@ -17,7 +17,7 @@ public class AlphaCetiSignalPlayer {
     private String currentMorse = "";
     private double lastPlayed = 0;
 
-    public AlphaCetiSignalPlayer(AssetManager assetManager) {
+    public SignalPlayer(AssetManager assetManager) {
         this.assetManager = assetManager;
     }
 

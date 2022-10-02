@@ -1,5 +1,6 @@
 package hu.mudlee.lwjgl3;
 
+import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import hu.mudlee.LD51Game;
@@ -18,10 +19,14 @@ public class Lwjgl3Launcher {
 		cfg.setTitle("LD51");
 		cfg.useVsync(false);
 		cfg.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate);
-		cfg.setWindowedMode(
-				Lwjgl3ApplicationConfiguration.getDisplayMode().width / 2,
-				Lwjgl3ApplicationConfiguration.getDisplayMode().height / 2
-		);
+
+		var width = Lwjgl3ApplicationConfiguration.getDisplayMode().width / 2;
+		var height = Lwjgl3ApplicationConfiguration.getDisplayMode().height / 2;
+
+		if (Lwjgl3ApplicationConfiguration.getDisplayMode().width < 1200) {
+		}
+
+		cfg.setWindowedMode(width, height);
 		cfg.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png");
 		return cfg;
 	}
