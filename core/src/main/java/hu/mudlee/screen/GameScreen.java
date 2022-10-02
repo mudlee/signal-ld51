@@ -20,6 +20,9 @@ import hu.mudlee.*;
 import hu.mudlee.conversation.Conversation;
 import hu.mudlee.ui.Font;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 import static hu.mudlee.Constants.*;
 
 public class GameScreen extends AbstractScreen implements InputProcessor {
@@ -119,6 +122,10 @@ public class GameScreen extends AbstractScreen implements InputProcessor {
 
 		if (winningConversationFinishedAt > 0 && (winningConversationFinishedAt + 3000) < System.currentTimeMillis()) {
 			Gdx.app.exit();
+		}
+
+		if (state == State.INITIAL_CONVERSATION && Gdx.input.isKeyJustPressed(Input.Keys.F11)) {
+			conversation.play(Collections.singletonList(INITIAL_CONVERSATION.get(INITIAL_CONVERSATION.size() - 1)));
 		}
 
 		if (state == State.INITIAL_CONVERSATION || state == State.GAME_WON || state == State.GAME_OVER) {
